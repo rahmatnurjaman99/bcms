@@ -1,0 +1,18 @@
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar DateTime
+    @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+"Root query provides a simple health-check field. Actual queries live in imported model schemas."
+type Query {
+    ping: String! @field(resolver: "App\\GraphQL\\Queries\\SystemQuery@ping")
+}
+
+"Root mutation provides a simple no-op field. Real mutations are defined in imported schemas."
+type Mutation {
+    noop: Boolean! @field(resolver: "App\\GraphQL\\Mutations\\SystemMutation@noop")
+}
+
+#import models/User.graphql
+#import models/Site.graphql
+#import models/Role.graphql
+#import auth/Auth.graphql

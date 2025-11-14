@@ -1,0 +1,32 @@
+"Authentication result payload."
+type AuthPayload {
+    token: String!
+    user: User!
+}
+
+input RegisterInput {
+    name: String!
+    email: String!
+    password: String!
+    passwordConfirmation: String!
+    deviceName: String
+}
+
+enum SocialProvider {
+    GOOGLE
+}
+
+extend type Mutation {
+    register(input: RegisterInput!): AuthPayload!
+        @field(resolver: "App\\GraphQL\\Mutations\\AuthMutator@register")
+
+    login(email: String!, password: String!, deviceName: String): AuthPayload!
+        @field(resolver: "App\\GraphQL\\Mutations\\AuthMutator@login")
+
+    socialLogin(provider: SocialProvider!, accessToken: String!, deviceName: String): AuthPayload!
+        @field(resolver: "App\\GraphQL\\Mutations\\AuthMutator@socialLogin")
+
+    logout: Boolean!
+        @guard
+        @field(resolver: "App\\GraphQL\\Mutations\\AuthMutator@logout")
+}

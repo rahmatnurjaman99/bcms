@@ -1,0 +1,27 @@
+extend type Query {
+    "Fetch a single site by id."
+    site(id: ID! @eq): Site
+        @guard
+        @can(ability: "sites.view", model: "App\\Models\\Site")
+        @find
+
+    "List all sites with optional filters."
+    sites(
+        "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
+        name: String @where(operator: "like")
+        "Filters by active status."
+        status: Boolean @where
+    ): [Site!]!
+        @guard
+        @can(ability: "sites.view", model: "App\\Models\\Site")
+        @paginate(defaultCount: 10)
+}
+
+"Represents a registered client application."
+type Site {
+    id: ID!
+    name: String!
+    status: Boolean!
+    created_at: DateTime!
+    updated_at: DateTime!
+}

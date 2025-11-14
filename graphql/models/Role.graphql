@@ -1,0 +1,86 @@
+extend type Query {
+    roles(
+        "Search by role name or permission name. Accepts SQL LIKE wildcards `%` and `_`."
+        search: String
+    ): [Role!]!
+        @guard
+        @can(ability: "roles.manage", model: "Spatie\\Permission\\Models\\Role")
+        @field(resolver: "App\\GraphQL\\Queries\\RoleQuery@roles")
+
+    permissions: [Permission!]!
+        @guard
+        @can(ability: "roles.manage", model: "Spatie\\Permission\\Models\\Permission")
+        @all(model: "Spatie\\Permission\\Models\\Permission")
+}
+
+extend type Mutation {
+    createRole(input: CreateRoleInput!): Role!
+        @guard
+        @can(ability: "roles.manage", model: "Spatie\\Permission\\Models\\Role")
+        @field(resolver: "App\\GraphQL\\Mutations\\RoleMutator@createRole")
+
+    createPermission(input: CreatePermissionInput!): Permission!
+        @guard
+        @can(ability: "roles.manage", model: "Spatie\\Permission\\Models\\Permission")
+        @field(resolver: "App\\GraphQL\\Mutations\\RoleMutator@createPermission")
+
+    updateRole(id: ID!, input: UpdateRoleInput!): Role!
+        @guard
+        @can(ability: "roles.manage", model: "Spatie\\Permission\\Models\\Role")
+        @field(resolver: "App\\GraphQL\\Mutations\\RoleMutator@updateRole")
+
+    deleteRole(id: ID!): Boolean!
+        @guard
+        @can(ability: "roles.manage", model: "Spatie\\Permission\\Models\\Role")
+        @field(resolver: "App\\GraphQL\\Mutations\\RoleMutator@deleteRole")
+
+    updatePermission(id: ID!, input: UpdatePermissionInput!): Permission!
+        @guard
+        @can(ability: "roles.manage", model: "Spatie\\Permission\\Models\\Permission")
+        @field(resolver: "App\\GraphQL\\Mutations\\RoleMutator@updatePermission")
+
+    deletePermission(id: ID!): Boolean!
+        @guard
+        @can(ability: "roles.manage", model: "Spatie\\Permission\\Models\\Permission")
+        @field(resolver: "App\\GraphQL\\Mutations\\RoleMutator@deletePermission")
+}
+
+input CreateRoleInput {
+    name: String!
+    permissions: [String!]
+    guard: String
+}
+
+input UpdateRoleInput {
+    name: String
+    permissions: [String!]
+    guard: String
+}
+
+input CreatePermissionInput {
+    name: String!
+    guard: String
+}
+
+input UpdatePermissionInput {
+    name: String
+    guard: String
+}
+
+type Role {
+    id: ID!
+    name: String!
+    guard_name: String!
+    permissions: [Permission!]! @belongsToMany
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type Permission {
+    id: ID!
+    name: String!
+    guard_name: String!
+    roles: [Role!]! @belongsToMany
+    created_at: DateTime!
+    updated_at: DateTime!
+}
