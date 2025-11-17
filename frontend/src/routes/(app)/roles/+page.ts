@@ -1,5 +1,5 @@
 import type { PageLoad } from "./$types";
-import { fetchRolesList } from "$lib/api/admin";
+import { fetchPermissionsList, fetchRolesList } from "$lib/api/admin";
 import { hasPermission } from "$lib/utils/permissions";
 
 export const load: PageLoad = async ({ fetch, parent }) => {
@@ -10,10 +10,14 @@ export const load: PageLoad = async ({ fetch, parent }) => {
 		return {
 			authorized: false,
 			roles: [],
-		};
+		permissions: [],
+	};
 	}
 
-	const roles = await fetchRolesList({ fetchImpl: fetch });
+	const [roles, permissions] = await Promise.all([
+		fetchRolesList({ fetchImpl: fetch }),
+		fetchPermissionsList({ fetchImpl: fetch }),
+	]);
 
-	return { authorized: true, roles };
+	return { authorized: true, roles, permissions };
 };

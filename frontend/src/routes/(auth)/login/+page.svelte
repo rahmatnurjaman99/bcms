@@ -8,8 +8,8 @@
 </script>
 
 <svelte:head>
-	<title>Sign in | {APP_NAME}</title>
-	<meta name="description" content={`Sign in to access your ${APP_NAME} workspace.`} />
+	<title>Log in | {APP_NAME}</title>
+	<meta name="description" content={`Log in to access your ${APP_NAME} workspace.`} />
 </svelte:head>
 
 <div class="min-h-screen w-full bg-background lg:grid lg:grid-cols-2">

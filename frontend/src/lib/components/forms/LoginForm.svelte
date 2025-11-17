@@ -5,6 +5,7 @@
 	import { Label } from "$lib/components/ui/label";
 	import { requestGoogleAccessToken } from "$lib/services/google";
 	import { goto } from "$app/navigation";
+	import { toast } from "svelte-sonner";
 
 	let { redirectTo = "/dashboard" } = $props<{ redirectTo?: string }>();
 
@@ -14,18 +15,16 @@
 	let isSubmitting = $state(false);
 	let isGoogleSubmitting = $state(false);
 	let errorMessage = $state("");
-	let successMessage = $state("");
 
 	async function handleSubmit(event: SubmitEvent) {
 		event.preventDefault();
 		isSubmitting = true;
 		errorMessage = "";
-		successMessage = "";
 
 		try {
 			const payload = await login({ email, password, deviceName });
 			persistAuth(payload);
-			successMessage = `Welcome back, ${payload.user.name}!`;
+			toast.success(`Welcome back, ${payload.user.name}!`);
 			goto(redirectTo || "/dashboard");
 		} catch (error) {
 			if (error instanceof Error) {
@@ -41,7 +40,6 @@
 	async function handleGoogleSignIn() {
 		isGoogleSubmitting = true;
 		errorMessage = "";
-		successMessage = "";
 
 		try {
 			const accessToken = await requestGoogleAccessToken();
@@ -50,7 +48,7 @@
 				accessToken,
 			});
 			persistAuth(payload);
-			successMessage = `Welcome back, ${payload.user.name}!`;
+			toast.success(`Welcome back, ${payload.user.name}!`);
 			goto(redirectTo || "/dashboard");
 		} catch (error) {
 			if (error instanceof Error) {
@@ -97,10 +95,6 @@
 
 	{#if errorMessage}
 		<p class="text-sm text-destructive">{errorMessage}</p>
-	{/if}
-
-	{#if successMessage}
-		<p class="text-sm text-emerald-600">{successMessage}</p>
 	{/if}
 
 	<Button class="w-full" type="submit" disabled={isSubmitting}>
