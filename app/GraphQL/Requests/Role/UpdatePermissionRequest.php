@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Requests\Role;
 
-use Illuminate\Support\Facades.Validator;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Permission;
 
@@ -29,7 +29,7 @@ class UpdatePermissionRequest
                 'max:255',
                 Rule::unique(config('permission.table_names.permissions'), 'name')
                     ->ignore($permission->id)
-                    ->where(fn ($query) => $query->where('guard_name', $guard)),
+                    ->where(fn($query) => $query->where('guard_name', $guard)),
             ],
             'guard' => ['nullable', 'string', 'max:255'],
         ];

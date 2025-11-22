@@ -67,7 +67,7 @@ const USER_FIELDS = `
 `;
 
 const USERS_QUERY = `
-	query Users($page: Int, $first: Int, $search: String) {
+	query Users($page: Int, $first: Int!, $search: String) {
 		users(page: $page, first: $first, search: $search) {
 			data {
 				id
@@ -135,7 +135,7 @@ export async function fetchUsersList({
 }): Promise<PaginatedResponse<UserListItem>> {
 	const data = await graphqlRequest<{ users: PaginatedResponse<UserListItem> }>({
 		query: USERS_QUERY,
-		variables: { page, first, search },
+		variables: { page, first: first ?? 10, search },
 		fetchImpl,
 	});
 

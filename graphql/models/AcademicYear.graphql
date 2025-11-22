@@ -1,0 +1,104 @@
+type AcademicYear {
+    id: ID!
+    name: String!
+    start_date: Date!
+    end_date: Date!
+    is_active: Boolean!
+    description: String
+    duration_in_days: Int!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+input CreateAcademicYearInput {
+    name: String!
+        @rules(
+            apply: [
+                "required"
+                "string"
+                "max:255"
+                "unique:academic_years,name"
+            ]
+        )
+    start_date: Date! @rules(apply: ["required", "date"])
+    end_date: Date! @rules(apply: ["required", "date", "after:start_date"])
+    is_active: Boolean
+    description: String
+}
+
+input UpdateAcademicYearInput {
+    id: ID! @rules(apply: ["required", "exists:academic_years,id"])
+    name: String @rules(apply: ["string", "max:255"])
+    start_date: Date @rules(apply: ["date"])
+    end_date: Date @rules(apply: ["date", "after:start_date"])
+    is_active: Boolean
+    description: String
+}
+
+extend type Query {
+    "Get all academic years with optional filtering and pagination"
+    academicYears(
+        orderBy: [OrderByClause!] @orderBy
+        name: String @where(operator: "like")
+        is_active: Boolean @where
+        start_date: Date @where
+        end_date: Date @where
+        page: Int
+        first: Int = 10
+    ): [AcademicYear!]!
+        @guard
+        @can(ability: "academic_years.view", model: "App\\Models\\AcademicYear")
+        @paginate(model: "App\\Models\\AcademicYear", defaultCount: 10)
+
+    "Get a single academic year by ID"
+    academicYear(id: ID! @eq): AcademicYear
+        @guard
+        @can(ability: "academic_years.view", model: "App\\Models\\AcademicYear")
+        @find
+
+    "Get the currently active academic year"
+    activeAcademicYear: AcademicYear
+        @guard
+        @can(ability: "academic_years.view", model: "App\\Models\\AcademicYear")
+        @field(resolver: "App\\GraphQL\\Queries\\AcademicYearQuery@active")
+}
+
+extend type Mutation {
+    "Create a new academic year"
+    createAcademicYear(input: CreateAcademicYearInput! @spread): AcademicYear!
+        @guard
+        @can(
+            ability: "academic_years.manage"
+            model: "App\\Models\\AcademicYear"
+        )
+        @field(resolver: "App\\GraphQL\\Mutations\\AcademicYearMutation@create")
+
+    "Update an existing academic year"
+    updateAcademicYear(input: UpdateAcademicYearInput! @spread): AcademicYear!
+        @guard
+        @can(
+            ability: "academic_years.manage"
+            model: "App\\Models\\AcademicYear"
+        )
+        @field(resolver: "App\\GraphQL\\Mutations\\AcademicYearMutation@update")
+
+    "Delete an academic year (soft delete)"
+    deleteAcademicYear(id: ID! @whereKey): AcademicYear
+        @guard
+        @can(
+            ability: "academic_years.manage"
+            model: "App\\Models\\AcademicYear"
+        )
+        @delete
+
+    "Set an academic year as active (deactivates all others)"
+    setActiveAcademicYear(id: ID!): AcademicYear!
+        @guard
+        @can(
+            ability: "academic_years.manage"
+            model: "App\\Models\\AcademicYear"
+        )
+        @field(
+            resolver: "App\\GraphQL\\Mutations\\AcademicYearMutation@setActive"
+        )
+}

@@ -23,9 +23,13 @@ enum UserRole: string
                 UserPermission::USERS_MANAGE,
                 UserPermission::SITES_VIEW,
                 UserPermission::SITES_MANAGE,
+                UserPermission::ACTIVITY_VIEW,
+                UserPermission::ACADEMIC_YEARS_VIEW,
+                UserPermission::ACADEMIC_YEARS_MANAGE,
             ],
             self::USER => [
                 UserPermission::SITES_VIEW,
+                UserPermission::ACADEMIC_YEARS_VIEW,
             ],
         };
     }

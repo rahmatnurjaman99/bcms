@@ -2,6 +2,13 @@
 scalar DateTime
     @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
+"A date string with format `Y-m-d`, e.g. `2018-05-23`."
+scalar Date
+    @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+"A JSON object or array."
+scalar JSON @scalar(class: "MLL\\GraphQLScalars\\JSON")
+
 "Root query provides a simple health-check field. Actual queries live in imported model schemas."
 type Query {
     ping: String! @field(resolver: "App\\GraphQL\\Queries\\SystemQuery@ping")
@@ -15,4 +22,6 @@ type Mutation {
 #import models/User.graphql
 #import models/Site.graphql
 #import models/Role.graphql
+#import models/AcademicYear.graphql
+#import models/Activity.graphql
 #import auth/Auth.graphql

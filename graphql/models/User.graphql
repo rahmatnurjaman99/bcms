@@ -8,10 +8,7 @@ extend type Query {
         email: String
             @eq
             @rules(apply: ["prohibits:id", "required_without:id", "email"])
-    ): User
-        @guard
-        @can(ability: "users.view", model: "App\\Models\\User")
-        @find
+    ): User @guard @can(ability: "users.view", model: "App\\Models\\User") @find
 
     "List multiple users."
     users(
@@ -19,10 +16,11 @@ extend type Query {
         search: String
         page: Int
         first: Int = 10
-    ): UserPaginator!
+    ): [User!]!
+        @paginate
         @guard
         @can(ability: "users.view", model: "App\\Models\\User")
-        @field(resolver: "App\\GraphQL\\Resolvers\\UserResolver@paginate")
+    # @field(resolver: "App\\GraphQL\\Resolvers\\UserResolver@paginate")
 
     me: User @auth
 }
@@ -78,9 +76,4 @@ type User {
     roles: [Role!]! @belongsToMany
     permissions: [Permission!]!
         @field(resolver: "App\\GraphQL\\Resolvers\\UserResolver@permissions")
-}
-
-type UserPaginator {
-    paginatorInfo: PaginatorInfo!
-    data: [User!]!
 }

@@ -1,0 +1,40 @@
+extend type Query {
+    "List activity logs with filters."
+    activities(
+        page: Int
+        first: Int = 20
+        search: String
+        logName: String
+        event: String
+        createdFrom: Date
+        createdTo: Date
+        subject_type: String
+        subject_id: ID
+        causer_id: ID
+        batch_uuid: String
+    ): [Activity!]!
+        @guard
+        @can(
+            ability: "activity.view"
+            model: "Spatie\\Activitylog\\Models\\Activity"
+        )
+        @paginate(
+            builder: "App\\GraphQL\\Queries\\ActivityQuery@activities"
+            defaultCount: 20
+        )
+}
+
+type Activity {
+    id: ID!
+    log_name: String
+    description: String!
+    event: String
+    subject_type: String
+    subject_id: ID
+    causer_type: String
+    causer_id: ID
+    properties: JSON
+    batch_uuid: String
+    created_at: DateTime!
+    updated_at: DateTime!
+}
